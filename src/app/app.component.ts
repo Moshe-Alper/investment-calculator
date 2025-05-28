@@ -1,30 +1,36 @@
-import { Component } from '@angular/core';
-import { AppHeaderComponent } from './cmps/app-header/app-header.component';
-import { UserInputComponent } from './cmps/user-input/user-input.component';
+import { Component } from '@angular/core'
+import { AppHeaderComponent } from './cmps/app-header/app-header.component'
+import { UserInputComponent } from './cmps/user-input/user-input.component'
+import { InvestmentInput } from './models/investment-input.model'
+import { InvestmentResultsComponent } from "./cmps/investment-results/investment-results.component";
 
 @Component({
   selector: 'app-root',
   standalone: true,
   templateUrl: './app.component.html',
-  imports: [AppHeaderComponent, UserInputComponent],
+  imports: [AppHeaderComponent, UserInputComponent, InvestmentResultsComponent],
 })
 export class AppComponent {
-  calculateInvestmentResults( data:{    
-    initialInvestment: number, 
-    duration: number,
-    expectedReturn: number,
-    annualInvestment: number
-  }) {
+  resultsData?: {
+        year: number,
+        interest: number,
+        valueEndOfYear: number,
+        annualInvestment: number,
+        totalInterest: number,
+        totalAmountInvested: number,
+  }[]
+
+  onCalculateInvestmentResults( data: InvestmentInput) {
     const { initialInvestment, duration, expectedReturn, annualInvestment} = data
-    const annualData = [];
-    let investmentValue = initialInvestment;
+    const annualData = []
+    let investmentValue = initialInvestment
 
     for (let i = 0; i < duration; i++) {
-      const year = i + 1;
-      const interestEarnedInYear = investmentValue * (expectedReturn / 100);
-      investmentValue += interestEarnedInYear + annualInvestment;
+      const year = i + 1
+      const interestEarnedInYear = investmentValue * (expectedReturn / 100)
+      investmentValue += interestEarnedInYear + annualInvestment
       const totalInterest =
-        investmentValue - annualInvestment * year - initialInvestment;
+        investmentValue - annualInvestment * year - initialInvestment
       annualData.push({
         year: year,
         interest: interestEarnedInYear,
@@ -32,9 +38,9 @@ export class AppComponent {
         annualInvestment: annualInvestment,
         totalInterest: totalInterest,
         totalAmountInvested: initialInvestment + annualInvestment * year,
-      });
+      })
     }
 
-    return annualData;
+    this.resultsData = annualData
   }
 }
